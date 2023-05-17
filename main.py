@@ -251,7 +251,7 @@ def main():
         Equation(x ** 2, x),
         Equation(sin(x * 2) + 2 * x ** 3 - 1.3 * x + 5.14, x),
         Equation(exp(x) - 1.12 * x ** 2 - 3.14, x),
-        Equation(exp(x) - 1.12 * x ** 2 - 3.14, x)
+        Equation(x ** 5 - 1.18, x)
     )
     solution_methods = (
         RectangleLeftMethod,
