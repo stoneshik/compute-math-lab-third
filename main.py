@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-import numpy
 from sympy import diff, latex, sin, exp, Symbol
 
 
@@ -157,6 +156,37 @@ class TrapezeMethod(SolutionMethod):
         return integral_value_first, n
 
 
+class SimpsonMethod(SolutionMethod):
+    """
+    Класс метода Симпсона
+    """
+    name: str = 'метод Симпсона'
+
+    def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
+        super().__init__(equation, a, b, n, 4, epsilon)
+
+    def calc(self) -> tuple[float, int]:
+        func = self._equation.equation_func
+        x = self._equation.symbol
+        integral_value_first: float = 0.0
+        n: int = self._n
+        while True:
+            integral_value_zero = integral_value_first
+            h = (self._b - self._a) / n
+            for i in range(1, n):
+                x_i = self._a + h * i
+                if i % 2 == 0:
+                    integral_value_first += 2 * func.subs(x, x_i).evalf()
+                    continue
+                integral_value_first += 4 * func.subs(x, x_i).evalf()
+            integral_value_first += func.subs(x, self._a).evalf() + func.subs(x, self._b).evalf()
+            integral_value_first *= h / 3
+            if abs((integral_value_first - integral_value_zero) / (2 ** self._k - 1)) < self._epsilon:
+                break
+            n *= 2
+        return integral_value_first, n
+
+
 def input_data(equations, solution_methods) -> SolutionMethod:
     equation = None
     while True:
@@ -219,12 +249,16 @@ def main():
     equations = (
         Equation(x ** 3 - 2 * x ** 2 - 5 * x + 24, x),
         Equation(x ** 2, x),
+        Equation(sin(x * 2) + 2 * x ** 3 - 1.3 * x + 5.14, x),
+        Equation(exp(x) - 1.12 * x ** 2 - 3.14, x),
+        Equation(exp(x) - 1.12 * x ** 2 - 3.14, x)
     )
     solution_methods = (
         RectangleLeftMethod,
         RectangleRightMethod,
         RectangleMiddleMethod,
         TrapezeMethod,
+        SimpsonMethod,
     )
     solution_method = input_data(equations, solution_methods)
     if solution_method is None:
