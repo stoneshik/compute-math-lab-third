@@ -23,7 +23,7 @@ class SolutionMethod(ABC):
     """
     Базовый абстрактный класс для классов реализаций методов вычисления интегралов
     """
-    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float, name: str) -> None:
+    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float) -> None:
         assert a != b, "Значения a и b должны быть различны"
         assert a < b, "Значение a должно быть меньше b"
         assert epsilon > 0, "Значение эпсилон должно быть больше нуля"
@@ -34,7 +34,6 @@ class SolutionMethod(ABC):
         self._k = k
         self._epsilon = epsilon
         self._h = (b - a) / n
-        self.name = name
 
     @abstractmethod
     def calc(self) -> tuple[float, int]:
@@ -45,8 +44,8 @@ class RectangleMethod(SolutionMethod):
     """
     Базовый класс для реализации метода прямоугольников
     """
-    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float, x_first: float, name: str) -> None:
-        super().__init__(equation, a, b, n, k, epsilon, name)
+    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float, x_first: float) -> None:
+        super().__init__(equation, a, b, n, k, epsilon)
         self._x_first = x_first
 
     def calc(self) -> tuple[float, int]:
@@ -71,24 +70,30 @@ class RectangleLeftMethod(RectangleMethod):
     """
     Класс метода левых прямоугольников
     """
+    name: str = 'метод левых прямоугольников'
+
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 1, epsilon, a, 'метод левых прямоугольников')
+        super().__init__(equation, a, b, n, 1, epsilon, a)
 
 
 class RectangleRightMethod(RectangleMethod):
     """
     Класс метода правых прямоугольников
     """
+    name: str = 'метод правых прямоугольников'
+
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 1, epsilon, a + (b - a) / n, 'метод правых прямоугольников')
+        super().__init__(equation, a, b, n, 1, epsilon, a + (b - a) / n)
 
 
 class RectangleMiddleMethod(RectangleMethod):
     """
     Класс метода средних прямоугольников
     """
+    name: str = 'метод средних прямоугольников'
+
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 2, epsilon, a + (b - a) / n / 2, 'метод средних прямоугольников')
+        super().__init__(equation, a, b, n, 2, epsilon, a + (b - a) / n / 2)
 
 
 def input_data(equations, solution_methods) -> SolutionMethod:
@@ -130,7 +135,7 @@ def input_data(equations, solution_methods) -> SolutionMethod:
             break
         n = int(n)
         if n <= 0:
-            print("Значение должно быть болльше нуля")
+            print("Значение должно быть больше нуля")
             continue
         break
     while True:
@@ -151,7 +156,8 @@ def input_data(equations, solution_methods) -> SolutionMethod:
 def main():
     x = Symbol('x')
     equations = (
-        Equation(x ** 3 - 2.92 * x ** 2 + 1.435 * x + 0.791, x),
+        Equation(x ** 3 - 2 * x ** 2 - 5 * x + 24, x),
+        Equation(x ** 2, x),
     )
     solution_methods = (
         RectangleLeftMethod,
