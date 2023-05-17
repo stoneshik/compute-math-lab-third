@@ -44,9 +44,8 @@ class RectangleMethod(SolutionMethod):
     """
     Базовый класс для реализации метода прямоугольников
     """
-    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float, x_first: float) -> None:
+    def __init__(self, equation: Equation, a: float, b: float, n: int, k: int, epsilon: float) -> None:
         super().__init__(equation, a, b, n, k, epsilon)
-        self._x_first = x_first
 
     def calc(self) -> tuple[float, int]:
         func = self._equation.equation_func
@@ -57,7 +56,7 @@ class RectangleMethod(SolutionMethod):
             integral_value_zero = integral_value_first
             h = (self._b - self._a) / n
             for i in range(n):
-                x_i = self._x_first + h * i
+                x_i = self._a + h * i
                 integral_value_first += func.subs(x, x_i).evalf()
             integral_value_first *= h
             if abs((integral_value_first - integral_value_zero) / (2 ** self._k - 1)) < self._epsilon:
@@ -73,7 +72,7 @@ class RectangleLeftMethod(RectangleMethod):
     name: str = 'метод левых прямоугольников'
 
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 1, epsilon, a)
+        super().__init__(equation, a, b, n, 1, epsilon)
 
 
 class RectangleRightMethod(RectangleMethod):
@@ -83,7 +82,24 @@ class RectangleRightMethod(RectangleMethod):
     name: str = 'метод правых прямоугольников'
 
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 1, epsilon, a + (b - a) / n)
+        super().__init__(equation, a, b, n, 1, epsilon)
+
+    def calc(self) -> tuple[float, int]:
+        func = self._equation.equation_func
+        x = self._equation.symbol
+        integral_value_first: float = 0.0
+        n: int = self._n
+        while True:
+            integral_value_zero = integral_value_first
+            h = (self._b - self._a) / n
+            for i in range(n):
+                x_i = self._a + h + h * i
+                integral_value_first += func.subs(x, x_i).evalf()
+            integral_value_first *= h
+            if abs((integral_value_first - integral_value_zero) / (2 ** self._k - 1)) < self._epsilon:
+                break
+            n *= 2
+        return integral_value_first, n
 
 
 class RectangleMiddleMethod(RectangleMethod):
@@ -93,7 +109,24 @@ class RectangleMiddleMethod(RectangleMethod):
     name: str = 'метод средних прямоугольников'
 
     def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
-        super().__init__(equation, a, b, n, 2, epsilon, a + (b - a) / n / 2)
+        super().__init__(equation, a, b, n, 2, epsilon)
+
+    def calc(self) -> tuple[float, int]:
+        func = self._equation.equation_func
+        x = self._equation.symbol
+        integral_value_first: float = 0.0
+        n: int = self._n
+        while True:
+            integral_value_zero = integral_value_first
+            h = (self._b - self._a) / n
+            for i in range(n):
+                x_i = self._a + h / 2 + h * i
+                integral_value_first += func.subs(x, x_i).evalf()
+            integral_value_first *= h
+            if abs((integral_value_first - integral_value_zero) / (2 ** self._k - 1)) < self._epsilon:
+                break
+            n *= 2
+        return integral_value_first, n
 
 
 def input_data(equations, solution_methods) -> SolutionMethod:
