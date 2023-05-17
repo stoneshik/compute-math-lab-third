@@ -129,6 +129,34 @@ class RectangleMiddleMethod(RectangleMethod):
         return integral_value_first, n
 
 
+class TrapezeMethod(SolutionMethod):
+    """
+    Класс метода трапеций
+    """
+    name: str = 'метод трапеций'
+
+    def __init__(self, equation: Equation, a: float, b: float, n: int, epsilon: float = 0.01) -> None:
+        super().__init__(equation, a, b, n, 2, epsilon)
+
+    def calc(self) -> tuple[float, int]:
+        func = self._equation.equation_func
+        x = self._equation.symbol
+        integral_value_first: float = 0.0
+        n: int = self._n
+        while True:
+            integral_value_zero = integral_value_first
+            h = (self._b - self._a) / n
+            for i in range(1, n):
+                x_i = self._a + h * i
+                integral_value_first += func.subs(x, x_i).evalf()
+            integral_value_first += (func.subs(x, self._a).evalf() + func.subs(x, self._b).evalf()) / 2
+            integral_value_first *= h
+            if abs((integral_value_first - integral_value_zero) / (2 ** self._k - 1)) < self._epsilon:
+                break
+            n *= 2
+        return integral_value_first, n
+
+
 def input_data(equations, solution_methods) -> SolutionMethod:
     equation = None
     while True:
@@ -196,6 +224,7 @@ def main():
         RectangleLeftMethod,
         RectangleRightMethod,
         RectangleMiddleMethod,
+        TrapezeMethod,
     )
     solution_method = input_data(equations, solution_methods)
     if solution_method is None:
