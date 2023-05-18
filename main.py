@@ -50,6 +50,7 @@ class RectangleMethod(SolutionMethod):
         n: int = self._n
         while True:
             integral_value_zero = integral_value_first
+            integral_value_first = 0.0
             h = (self._b - self._a) / n
             for i in range(n):
                 x_i = self._a + h * i
@@ -87,6 +88,7 @@ class RectangleRightMethod(RectangleMethod):
         n: int = self._n
         while True:
             integral_value_zero = integral_value_first
+            integral_value_first = 0.0
             h = (self._b - self._a) / n
             for i in range(n):
                 x_i = self._a + h + h * i
@@ -114,6 +116,7 @@ class RectangleMiddleMethod(RectangleMethod):
         n: int = self._n
         while True:
             integral_value_zero = integral_value_first
+            integral_value_first = 0.0
             h = (self._b - self._a) / n
             for i in range(n):
                 x_i = self._a + h / 2 + h * i
@@ -141,6 +144,7 @@ class TrapezeMethod(SolutionMethod):
         n: int = self._n
         while True:
             integral_value_zero = integral_value_first
+            integral_value_first = 0.0
             h = (self._b - self._a) / n
             for i in range(1, n):
                 x_i = self._a + h * i
@@ -169,6 +173,7 @@ class SimpsonMethod(SolutionMethod):
         n: int = self._n
         while True:
             integral_value_zero = integral_value_first
+            integral_value_first = 0.0
             h = (self._b - self._a) / n
             for i in range(1, n):
                 x_i = self._a + h * i
