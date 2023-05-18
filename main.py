@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sympy import diff, latex, sin, exp, Symbol
+from sympy import latex, sin, exp, Symbol
 
 
 class Equation:
@@ -13,9 +13,6 @@ class Equation:
 
     def get_string(self) -> str:
         return latex(self.equation_func)
-
-    def get_diff(self):
-        return diff(self.equation_func)
 
 
 class SolutionMethod(ABC):
